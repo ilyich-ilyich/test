@@ -34,7 +34,7 @@ class App(tk.Tk):
         app.quit()
     
      def result(self):
-        
+        a=1
            
 
 if __name__ == "__main__":
