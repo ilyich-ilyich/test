@@ -10,9 +10,9 @@ class App(tk.Tk):
                              command=self.choose_directory)
         btn_file.pack(padx=60, pady=10)
         btn_dir.pack(padx=60, pady=10)
-        btn_result =tk.Button(self, text ="Расчет", command=self.result)
+        btn_result =tk.Button(self, text ="Расчет", command=self.result1)
         btn_result.pack(padx=60, pady=10)
-        btn_exit =tk.Button(self, text ="Выход", command=self.result)
+        btn_exit =tk.Button(self, text ="Выход", command=self.onExit)
         btn_exit.pack(padx=60, pady=10)
 
     def choose_file(self):
@@ -33,8 +33,10 @@ class App(tk.Tk):
         global app
         app.quit()
     
-     def result(self):
+    def result1(self):
         a=1
+        b=2
+
            
 
 if __name__ == "__main__":
