@@ -1,5 +1,10 @@
 import tkinter as tk
 import tkinter.filedialog as fd
+import os
+import sys
+from pyPdf import PdfFileReader
+
+PDF_EXTENSION = '.pdf'
 
 class App(tk.Tk):
     def __init__(self):
@@ -34,9 +39,19 @@ class App(tk.Tk):
         app.quit()
     
     def result1(self):
-        a=1
-        b=2
-
+         total_pages_count = 0
+        for root, dir, files in  os.walk(directory):
+            for file_name in files:
+                if file_name[-len(PDF_EXTENSION):] == PDF_EXTENSION:
+                    file_path = os.path.join(root, file_name)
+                    file_pages_count = pages_count(file_path)
+                    print file_path, file_pages_count
+                total_pages_count += file_pages_count
+        print 'total:', total_pages_count
+ 
+    def pages_count(path):
+        return PdfFileReader(file(path, "rb")).getNumPages()
+        a=PdfFileReader(file(path, "rb", FloatingPointError)
            
 
 if __name__ == "__main__":
