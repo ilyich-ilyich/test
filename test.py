@@ -35,7 +35,7 @@ class App(tk.Tk):
     
      def result(self):
         
-        app.quit()   
+           
 
 if __name__ == "__main__":
     app = App()
