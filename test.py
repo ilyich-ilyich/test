@@ -28,9 +28,27 @@ class App(tk.Tk):
                                       filetypes=filetypes)
         if filename:
             print(filename)
-            pl = open(filename, 'rb')
-            plread = PyPDF2.PdfFileReader(pl)
-            print(plread.numPages)
+            # pl = open(filename, 'rb')
+            #plread = PyPDF2.PdfFileReader(pl)
+            #print(plread.numPages)
+            pdf_file = fitz.open(filename)
+            location = input("Enter the location to save: ")
+            #поиск количества страниц в pdf
+            number_of_pages = len(pdf_file)
+            print('Количество страниц=',number_of_pages)
+            #итерация по каждой странице в pdf
+            for current_page_index in range(number_of_pages):
+            # итерация по каждому изображению на каждой странице PDF
+                for img_index,img in enumerate(pdf_file.getPageImageList(current_page_index)):
+                    xref = img[0]
+                    image = fitz.Pixmap(pdf_file, xref)
+                    # если это чёрно-белое или цветное изображение
+                    if image.n < 5:        
+                        image.writePNG("{}/image{}-{}.png".format(location,current_page_index, img_index))
+                        #если это CMYK: конвертируем в RGB
+                    else:                
+                        new_image = fitz.Pixmap(fitz.csRGB, image)
+                        new_image.writePNG("{}/image{}-{}.png".foramt(location,current_page_index, img_index))
 
 
 
