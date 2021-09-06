@@ -3,6 +3,7 @@ import tkinter.filedialog as fd
 import os
 import sys
 import PyPDF2
+import fitz
 
 
 class App(tk.Tk):
