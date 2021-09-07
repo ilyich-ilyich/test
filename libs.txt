@@ -1,3 +1,4 @@
 pip3 install tkinter
 pip install pypdf2
 pip3 install PyMuPDF
+https://github.com/UB-Mannheim/tesseract/wiki
