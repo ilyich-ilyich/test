@@ -4,6 +4,8 @@ import os
 import sys
 import PyPDF2
 import fitz
+import pytesseract
+from PIL import Image
 
 
 class App(tk.Tk):
@@ -32,7 +34,8 @@ class App(tk.Tk):
             #plread = PyPDF2.PdfFileReader(pl)
             #print(plread.numPages)
             pdf_file = fitz.open(filename)
-            location = input("Enter the location to save: ")
+            #location = input("Enter the location to save: ")
+            location = 'c:\img' 
             #поиск количества страниц в pdf
             number_of_pages = len(pdf_file)
             print('Количество страниц=',number_of_pages)
@@ -43,12 +46,21 @@ class App(tk.Tk):
                     xref = img[0]
                     image = fitz.Pixmap(pdf_file, xref)
                     # если это чёрно-белое или цветное изображение
-                    if image.n < 5:        
-                        image.writePNG("{}/image{}-{}.png".format(location,current_page_index, img_index))
+                    img_filename = "{}/image{}-{}.png".format(location,current_page_index, img_index)   
+                    if image.n < 5:
+                             
+                        image.writePNG(img_filename)
                         #если это CMYK: конвертируем в RGB
                     else:                
                         new_image = fitz.Pixmap(fitz.csRGB, image)
-                        new_image.writePNG("{}/image{}-{}.png".foramt(location,current_page_index, img_index))
+                        new_image.writePNG(img_filename)
+                    img = Image.open(img_filename)
+                    file_name = img.filename
+                    file_name = file_name.split(".")[0]
+                    text = pytesseract.image_to_string(img, lang='rus').strip()
+                    print(text)
+                    with open(f'{file_name}.txt', 'w') as text_file:
+                        text_file.write(text)    
 
 
 
