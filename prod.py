@@ -38,6 +38,7 @@ class App(tk.Tk):
                         "Accept-Language": "en"
                     }
             for i in range(4, ws.max_row + 1):                                                              # перебираем строки исх таблицы
+                print("обрабатываем  "str(i)+ "  из "+ str(ws.max_row + 1))
                 row_links =[] # строка для будущей таблицы    
                 nom_bu = (ws.cell(row=i, column=4).value)                                                   # получаем номер БУ 
                 adressURL=(ws.cell(row=i, column=9).value)                                                  # получаем ссылку
@@ -82,7 +83,7 @@ class App(tk.Tk):
             df = pd.DataFrame(tab_link, columns=["nomer_bu", "adress","pages","text1","text2","text3"])
             df.to_excel('c:/bu/1.xlsx')
             
-
+        print("все готово!")
     def onExit(self):
         global app
         app.quit()
