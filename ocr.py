@@ -1,6 +1,6 @@
 import pytesseract
 from PIL import Image
-img = Image.open('C:\img\image72-0.png')
+img = Image.open('c:/bu/tmp/image1-0.png')
 file_name = img.filename
 file_name = file_name.split(".")[0]
 text = pytesseract.image_to_string(img, lang='rus').strip()
