@@ -27,4 +27,4 @@ for i in range(8, ws.max_row + 1):  # 2nd arg in range() not inclusive, so add 1
     links.append(ws.cell(row=i, column=9).value)
     #print("i=", i)
 #print(links)
-#df['link'] = links
+df['link'] = links
