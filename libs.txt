@@ -2,5 +2,6 @@ pip3 install tkinter
 pip install pypdf2
 pip3 install PyMuPDF
 https://github.com/UB-Mannheim/tesseract/wiki
+установить доп язык распознавания
 pip install pandas
 pip install openpyxl xlsxwriter xlrd    но это не точно

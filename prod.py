@@ -13,12 +13,7 @@ class App(tk.Tk):
         super().__init__()
         btn_file = tk.Button(self, text="Выбрать файл",
                              command=self.choose_file)
-        btn_dir = tk.Button(self, text="Выбрать папку",
-                             command=self.choose_directory)
         btn_file.pack(padx=60, pady=10)
-        btn_dir.pack(padx=60, pady=10)
-        btn_result =tk.Button(self, text ="Расчет", command=self.result1)
-        btn_result.pack(padx=60, pady=10)
         btn_exit =tk.Button(self, text ="Выход", command=self.onExit)
         btn_exit.pack(padx=60, pady=10)
 
