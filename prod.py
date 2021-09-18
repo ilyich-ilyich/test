@@ -14,10 +14,15 @@ import requests
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
+        lbl = tk.Label(self, text="Программа скачивает pdf файлы и распазнает их")  
+        lbl.pack(padx=60, pady=10)  
+        lbl1 = tk.Label(self, text="Результат заносится в файл c:/bu/resultat.xlsx")  
+        lbl1.pack(padx=60, pady=10)  
+        
         btn_file = tk.Button(self, text="Выбрать файл",
                              command=self.choose_file)
         btn_file.pack(padx=60, pady=10)
-        btn_exit =tk.Button(self, text ="Выход", command=self.onExit)
+        btn_exit =tk.Button(self, text ="      Выход       ", command=self.onExit)
         btn_exit.pack(padx=60, pady=10)
 
     def choose_file(self):
@@ -38,52 +43,68 @@ class App(tk.Tk):
                         "Accept-Language": "en"
                     }
             for i in range(4, ws.max_row + 1):                                                              # перебираем строки исх таблицы
-                print("обрабатываем  "str(i)+ "  из "+ str(ws.max_row + 1))
+                print("обрабатываем  "  +str(i-3)+ "  из "+ str(ws.max_row -3))
                 row_links =[] # строка для будущей таблицы    
                 nom_bu = (ws.cell(row=i, column=4).value)                                                   # получаем номер БУ 
                 adressURL=(ws.cell(row=i, column=9).value)                                                  # получаем ссылку
-                send=requests.get(adressURL, headers=headers)                                               # загружаем файл в объект
-                name_of_PDF_file ='c:/bu/tmp/' +str(nom_bu)+'.pdf'
-                #print(name_of_PDF_file)
-                if send.status_code == 200:                                                                 # если успешно  записывваем объект как файл pdf
-                    #print('Success!')
-                    row_links.append(nom_bu)                                                                #в список добавляем номер БУ
-                    row_links.append(adressURL)                                                             #в список добавляемссылку на скан акта
-                    with open(name_of_PDF_file,"wb")as code:
-                        code.write(send.content)                                                                #записываем результат  в папку tmp
+                if(len(str(adressURL))) > 10:
+                    
+                    send=requests.get(adressURL, headers=headers)                                               # загружаем файл в объект
+                    name_of_PDF_file ='c:/bu/tmp/' +str(nom_bu)+'.pdf'
+                    #print(name_of_PDF_file)
+                    if send.status_code == 200:                                                                 # если успешно  записывваем объект как файл pdf
+                        #print('Success!')
+                        row_links.append(nom_bu)                                                                #в список добавляем номер БУ
+                        row_links.append(adressURL)                                                             #в список добавляемссылку на скан акта
+                        with open(name_of_PDF_file,"wb")as code:
+                            code.write(send.content)                                                                #записываем результат  в папку tmp
+                        # работа с pdf
+                        pdf_file = fitz.open(name_of_PDF_file)                                                      #  открываем скачаный файл
+                        location = 'c:/bu/tmp/'                                                                     #  папка для текстовых файлов
+                        number_of_pages = len(pdf_file)
+                        row_links.append(number_of_pages) #
+                        #подсчет количества страниц в pdf
                         
-                    # работа с pdf
-                    pdf_file = fitz.open(name_of_PDF_file)                                                      #  открываем скачаный файл
-                    location = 'c:/bu/tmp/'                                                                     #  папка для текстовых файлов
-                    number_of_pages = len(pdf_file)
-                    row_links.append(number_of_pages) #
-                    #подсчет количества страниц в pdf
-                    #print(row_links)
-                    number_of_pages =1
-                    for current_page_index in range(number_of_pages):                     #итерация по каждой странице в pdf
-                        for img_index,img in enumerate(pdf_file.getPageImageList(current_page_index)):          # итерация по каждому изображению на каждой странице PDF
-                            xref = img[0]
-                            image = fitz.Pixmap(pdf_file, xref)
-                            img_filename = name_of_PDF_file+'-'+str(current_page_index)+'-'+str(img_index) + '.png'
-                            #img_filename = "{}/image_name{}-{}.png".format(location,current_page_index, img_index)   # если это чёрно-белое или цветное изображение  
-                            if image.n < 5:
-                                image.writePNG(img_filename)                                                    #если это CMYK: конвертируем в RGB
-                            else:                
-                                new_image = fitz.Pixmap(fitz.csRGB, image)
-                                new_image.writePNG(img_filename)
-                            img = Image.open(img_filename)
-                            file_name = img.filename
-                            file_name = file_name.split(".")[0]
-                            #print (str(file_name))
-                            text = pytesseract.image_to_string(img, lang='rus').strip()
-                            row_links.append(text)
-                            tab_link.append(row_links)
-                            #with open(f'{file_name}.txt', 'w') as text_file:
-                             #   text_file.write(text)
-            df = pd.DataFrame(tab_link, columns=["nomer_bu", "adress","pages","text1","text2","text3"])
-            df.to_excel('c:/bu/1.xlsx')
+                        file_name  =1
+                        for current_page_index in range(1):                     #итерация по каждой странице в pdf number_of_pages
+                            for img_index,img in enumerate(pdf_file.getPageImageList(current_page_index)):          # итерация по каждому изображению на каждой странице PDF
+                                xref = img[0]
+                                image = fitz.Pixmap(pdf_file, xref)
+                                img_filename = name_of_PDF_file+'-'+str(current_page_index)+'-'+str(img_index) + '.png'
+                                #img_filename = "{}/image_name{}-{}.png".format(location,current_page_index, img_index)   # если это чёрно-белое или цветное изображение  
+                                if image.n < 5:
+                                    image.writePNG(img_filename)                                                    #если это CMYK: конвертируем в RGB
+                                else:                
+                                    new_image = fitz.Pixmap(fitz.csRGB, image)
+                                    new_image.writePNG(img_filename)
+                                img = Image.open(img_filename)
+                                file_name = img.filename
+                                file_name = file_name.split(".")[0]
+                                #print (str(file_name))
+                                try:
+                                    text = pytesseract.image_to_string(img, lang='rus').strip()
+                                except Exception:
+                                    print('ошибка распознования файла -' +str(file_name ))
+                                row_links.append(text)
+                                y = number_of_pages
+                        while  y < 5:
+                            row_links.append('      ') # добавляем в строку пустые элементы
+                            y += 1
+                else:
+                    print('отсутствует ссылка')
+                    row_links=['************','************','************','************','************','************']
+                tab_link.append(row_links)
             
-        print("все готово!")
+            #df = pd.DataFrame(tab_link)
+            df = pd.DataFrame(tab_link, columns=["номер БУ", "ссылка","листов","лист1","лист2","лист3","лист4","лист5"])
+            try:   
+                df.to_excel('c:/bu/resultat.xlsx')
+            except Exception:
+                print('внимание! ошибка записи в файл')
+                print(tab_link)
+            finally:
+                print('успешное завершение программы!')
+            
     def onExit(self):
         global app
         app.quit()
@@ -91,4 +112,5 @@ class App(tk.Tk):
 
 if __name__ == "__main__":
     app = App()
+    app.title("Программа распознования сканов актов возврата БУ")
     app.mainloop()

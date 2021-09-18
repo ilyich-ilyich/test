@@ -14,7 +14,6 @@ headers = {
             "Accept-Language": "en"
             }
 send=requests.get(adressUrl, headers=headers)
-file = open('D://bdseo.html','w')
 print(ws.cell(row=6, column=4).value)
 adress ='c:/bu/' +str(ws.cell(row=6, column=4).value)+'.pdf'
 print(adress)
