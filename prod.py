@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.filedialog as fd
+from tkinter import ttk
 import os
 import sys
 #import PyPDF2
@@ -12,12 +13,29 @@ import requests
 
 
 class App(tk.Tk):
+
     def __init__(self):
         super().__init__()
-        lbl = tk.Label(self, text="Программа скачивает pdf файлы и распазнает их")  
-        lbl.pack(padx=60, pady=10)  
+        global  txt0,txt1
+        lbl0 = tk.Label(self, text="Программа скачивает pdf файлы и распазнает их")  
+        lbl0.pack(padx=6, pady=1)  
         lbl1 = tk.Label(self, text="Результат заносится в файл c:/bu/resultat.xlsx")  
-        lbl1.pack(padx=60, pady=10)  
+        lbl1.pack(padx=6, pady=1) 
+        lbl1 = tk.Label(self, text="Укажите колонку с номером БУ")  
+        lbl1.pack(padx=6, pady=1)
+        kolonki = ('A','B','C','D','E','F','G','H','I')
+        txt0 = ttk.Combobox(self)
+        txt0['values'] = kolonki
+        txt0.set('D')    
+        txt0.pack(padx=6, pady=1)
+        lbl1 = tk.Label(self, text="Укажите колонку с ссылкой на файл")  
+        lbl1.pack(padx=6, pady=1) 
+        txt1 = ttk.Combobox(self)
+        txt1['values'] = kolonki
+        txt1.set('I')        
+        txt1.pack(padx=6, pady=1) 
+        txt0.bind("<<ComboboxSelected>>",choose_rb)
+        txt1.bind("<<ComboboxSelected>>",choose_rb)
         
         btn_file = tk.Button(self, text="Выбрать файл",
                              command=self.choose_file)
@@ -45,8 +63,11 @@ class App(tk.Tk):
             for i in range(4, ws.max_row + 1):                                                              # перебираем строки исх таблицы
                 print("обрабатываем  "  +str(i-3)+ "  из "+ str(ws.max_row -3))
                 row_links =[] # строка для будущей таблицы    
-                nom_bu = (ws.cell(row=i, column=4).value)                                                   # получаем номер БУ 
-                adressURL=(ws.cell(row=i, column=9).value)                                                  # получаем ссылку
+                nom_bu = (ws.cell(row=i, column=(int(rb)+1)).value)                                                   # получаем номер БУ 
+                adressURL=(ws.cell(row=i, column=(int(ra)+1)).value)                # получаем ссылку
+                if len(nom_bu)!=9:
+                    print('ошибка выбора колонки!')
+                    break
                 if(len(str(adressURL))) > 10:
                     
                     send=requests.get(adressURL, headers=headers)                                               # загружаем файл в объект
@@ -108,6 +129,11 @@ class App(tk.Tk):
     def onExit(self):
         global app
         app.quit()
+def choose_rb(event):
+    global rb, ra
+    rb = txt0.current()
+    ra = txt1.current()
+    print (" выбраны колонки = "+ str(rb)+"  и "+ str(ra))
     
 
 if __name__ == "__main__":
