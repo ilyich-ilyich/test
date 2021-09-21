@@ -133,7 +133,7 @@ def choose_rb(event):
     global rb, ra
     rb = txt0.current()
     ra = txt1.current()
-    print (" выбраны колонки = "+ str(rb)+"  и "+ str(ra))
+    #print (" выбраны колонки = "+ str(rb)+"  и "+ str(ra))
     
 
 if __name__ == "__main__":
