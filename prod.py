@@ -109,7 +109,7 @@ class App(tk.Tk):
                         #подсчет количества страниц в pdf
                         
                         file_name  =1
-                        for current_page_index in range(1):                     #итерация по каждой странице в pdf number_of_pages
+                        for current_page_index in range(number_of_pages):                     #итерация по каждой странице в pdf number_of_pages
                             for img_index,img in enumerate(pdf_file.getPageImageList(current_page_index)):          # итерация по каждому изображению на каждой странице PDF
                                 if img_index>10:
                                     break  #  игнорим 11 страницу
@@ -130,35 +130,42 @@ class App(tk.Tk):
                                     text = pytesseract.image_to_string(img, lang='rus').strip()
                                 except Exception:
                                     print('ошибка распознования файла -' +str(file_name ))
-                                row_links.append(text)
-                                y = number_of_pages
-                        while  y < 10:
-                            row_links.append('      ') # добавляем в строку пустые элементы
-                            y += 1
+                                # запузырить условие что добавлять при условии что не больше чем количество листов
+                                if len(row_links) < (number_of_pages+3): 
+                                    new_text = text.replace('\n\n\n', '\n')
+                                    new_text = new_text.replace('\n\n', '\n')
+                                    row_links.append(new_text)
+                    #
+                    y = number_of_pages
+                    print('номер бу:'+ str(nom_bu))
+                    while  len(row_links) < 13:
+                        row_links.append('      ') # добавляем в строку пустые элементы
                 else:  #   ячейка с ссылкой выбрана не верно
                     print('отсутствует ссылка')
-                    row_links=['************','************','************','************','************','************','************','************','************']
+                    row_links=[nom_bu,'*********','*********','*********','*********','*********','*********','*********','*********','*********','*********','*********','*********']
                 tab_link.append(row_links)
                 nom_stroki = i-2
                 if (nom_stroki//10)==(nom_stroki/10):  #десятая или сотая строка
-                    print('десятая строка!!!')
-                    df = pd.DataFrame(tab_link, columns=["номер БУ", "ссылка","листов","лист1","лист2","лист3","лист4","лист5","лист6","лист7","лист8","лист9","лист10"])
+                    print('готовим промежуточный файл!')
                     vr_file_name = 'c:/bu/tmp/resul'+str(nom_stroki)+'.xlsx'
-                    element = tab_link.clear()
                     try:   
+                        df = pd.DataFrame(tab_link, columns=["номер БУ", "ссылка","листов","лист1","лист2","лист3","лист4","лист5","лист6","лист7","лист8","лист9","лист10"])
+                        element = tab_link.clear()
                         df.to_excel(vr_file_name)
                     except Exception:
                         print('внимание! ошибка записи в файл: '+ vr_file_name)
                 
             
-            df = pd.DataFrame(tab_link, columns=["номер БУ", "ссылка","листов","лист1","лист2","лист3","лист4","лист5","лист6","лист7","лист8","лист9","лист10"])
             try:   
+                df = pd.DataFrame(tab_link, columns=["номер БУ", "ссылка","листов","лист1","лист2","лист3","лист4","лист5","лист6","лист7","лист8","лист9","лист10"])
                 df.to_excel('c:/bu/tmp/resultat.xlsx')
             except Exception:
                 print('внимание! ошибка записи в файл')
                 print(tab_link)
             finally:
                 print('успешное завершение записи в файл!')
+                print('если вы нажмете кнопку Выйти, временные файлы будут удалены и')
+                print('из промежуточных файлов будет собран финальный отчет!')
         #   тут выхов функции объединяющей файлы
         #
     def onExit(self):
