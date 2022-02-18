@@ -95,7 +95,7 @@ class App(tk.Tk):
                     send=requests.get(adressURL, headers=headers)                                               # загружаем файл в объект
                     #print(name_of_PDF_file)
                     if (send.status_code == 200) and (len(send.text) < 10000000) : # если код ответа по загрузке успешен и размер не больше 10 Мб продолжаем обработку
-                        print(f'Размер файла в МБайтах: {len(send.text) / (1024 * 1024)}')                    
+                        print(f'Размер файла в МБайтах: {len(send.text) / (1024 * 1024)}')    # печать размера файла                
                         begin_of_text = send.text 
                         row_links.append(nom_bu)                                                                #в список добавляем номер БУ
                         row_links.append(adressURL)                                                             #в список добавляемссылку на скан акта
