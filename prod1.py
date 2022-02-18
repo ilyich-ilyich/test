@@ -94,18 +94,17 @@ class App(tk.Tk):
                     
                     send=requests.get(adressURL, headers=headers)                                               # загружаем файл в объект
                     #print(name_of_PDF_file)
-                    if (send.status_code == 200) and (len(send.text) < 10000000) : # если код ответа по загрузке успешен и размер не больше 10 Мб продолжаем обработку
-                        print(f'Размер файла в МБайтах: {len(send.text) / (1024 * 1024)}')                    
+                    if send.status_code == 200: # если успешно  записывваем объект как файл
                         begin_of_text = send.text 
                         row_links.append(nom_bu)                                                                #в список добавляем номер БУ
                         row_links.append(adressURL)                                                             #в список добавляемссылку на скан акта
                         if begin_of_text.startswith('%PDF-'):     
                             name_of_PDF_file ='c:/bu/tmp/' +str(nom_bu)+'.pdf'   #  pdf
-
+                            
+                            #print('Success!')
                             with open(name_of_PDF_file,"wb")as code:
                                 code.write(send.content)                                                                #записываем результат  в папку tmp
                             # работа с pdf
-
                             pdf_file = fitz.open(name_of_PDF_file)                                                      #  открываем скачаный файл
                             location = 'c:/bu/tmp/'                                                                     #  папка для текстовых файлов
                             number_of_pages = len(pdf_file)
@@ -174,8 +173,12 @@ class App(tk.Tk):
                         element = tab_link.clear()
                         df.to_excel(vr_file_name)
                     except Exception:
-                        print('внимание! ошибка записи в файл: '+ vr_file_name)
-                
+                        print('внимание! ошибка записи в  типовой файл: '+ vr_file_name)
+                        vr_file_name = 'c:/bu/tmp/variant_resul'+str(nom_stroki)+'.xlsx'
+                        print('пишем в файл исключений: '+ vr_file_name)
+                        df = pd.DataFrame(tab_link,)
+                        element = tab_link.clear()
+                        df.to_excel(vr_file_name)
             
             try:   
                 df = pd.DataFrame(tab_link, columns=["номер БУ", "ссылка","листов","лист1","лист2","лист3","лист4","лист5","лист6","лист7","лист8","лист9","лист10"])
@@ -203,5 +206,5 @@ def choose_rb(event):
 
 if __name__ == "__main__":
     app = App()
-    app.title("Программа распознавания сканов актов возврата БУ")
+    app.title("Программа распознования сканов актов возврата БУ")
     app.mainloop()
